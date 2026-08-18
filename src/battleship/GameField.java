@@ -5,6 +5,7 @@ public class GameField {
     private static final int SIZE = 10;
 
     private final char[][] field = new char[SIZE][SIZE];
+    private final Ship[][] ships = new Ship[SIZE][SIZE];
 
     public GameField() {
         fill();
@@ -14,6 +15,7 @@ public class GameField {
         for (int row = 0; row < SIZE; row++) {
             for (int col = 0; col < SIZE; col++) {
                 field[row][col] = '~';
+                ships[row][col] = null;
             }
         }
     }
@@ -64,6 +66,7 @@ public class GameField {
     }
 
     public void placeShip(
+            Ship ship,
             int minRow,
             int maxRow,
             int minCol,
@@ -72,17 +75,37 @@ public class GameField {
         for (int row = minRow; row <= maxRow; row++) {
             for (int col = minCol; col <= maxCol; col++) {
                 field[row][col] = 'O';
+                ships[row][col] = ship;
             }
         }
     }
 
-    public boolean shoot(int row, int col) {
-        if (field[row][col] == 'O') {
+    public ShotResult shoot(int row, int col) {
+
+        char currentCell = field[row][col];
+
+        if (currentCell == 'O') {
+
+            Ship ship = ships[row][col];
+
             field[row][col] = 'X';
-            return true;
+            ship.hit();
+
+            if (ship.isSunk()) {
+                return ShotResult.SUNK;
+            }
+
+            return ShotResult.HIT;
         }
 
-        field[row][col] = 'M';
-        return false;
+        if (currentCell == 'X') {
+            return ShotResult.HIT;
+        }
+
+        if (currentCell == '~') {
+            field[row][col] = 'M';
+        }
+
+        return ShotResult.MISS;
     }
 }

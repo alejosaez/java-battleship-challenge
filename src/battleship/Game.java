@@ -15,6 +15,8 @@ public class Game {
             new Ship("Destroyer", 2)
     };
 
+    private int shipsRemaining = ships.length;
+
     public void start() {
         field.print(false);
 
@@ -27,10 +29,11 @@ public class Game {
 
         field.print(true);
 
-        takeShot();
+        playGame();
     }
 
     private void placeShip(Ship ship) {
+
         System.out.println(
                 "Enter the coordinates of the "
                         + ship.getName()
@@ -73,11 +76,25 @@ public class Game {
                 continue;
             }
 
-            int minRow = Math.min(start.getRow(), end.getRow());
-            int maxRow = Math.max(start.getRow(), end.getRow());
+            int minRow = Math.min(
+                    start.getRow(),
+                    end.getRow()
+            );
 
-            int minCol = Math.min(start.getColumn(), end.getColumn());
-            int maxCol = Math.max(start.getColumn(), end.getColumn());
+            int maxRow = Math.max(
+                    start.getRow(),
+                    end.getRow()
+            );
+
+            int minCol = Math.min(
+                    start.getColumn(),
+                    end.getColumn()
+            );
+
+            int maxCol = Math.max(
+                    start.getColumn(),
+                    end.getColumn()
+            );
 
             if (field.isTooClose(
                     minRow,
@@ -92,6 +109,7 @@ public class Game {
             }
 
             field.placeShip(
+                    ship,
                     minRow,
                     maxRow,
                     minCol,
@@ -103,10 +121,12 @@ public class Game {
         }
     }
 
-    private void takeShot() {
+    private void playGame() {
+
         System.out.println("Take a shot!");
 
-        while (true) {
+        while (shipsRemaining > 0) {
+
             String shotInput = scanner.next();
 
             if (!Coordinate.isValid(shotInput)) {
@@ -118,28 +138,40 @@ public class Game {
 
             Coordinate shot = new Coordinate(shotInput);
 
-            boolean hit = field.shoot(
+            ShotResult result = field.shoot(
                     shot.getRow(),
                     shot.getColumn()
             );
 
-            System.out.println();
-
-            // tablero con niebla
             field.print(true);
 
-            if (hit) {
-                System.out.println("You hit a ship!");
+            if (result == ShotResult.HIT) {
+
+                System.out.println(
+                        "You hit a ship! Try again:"
+                );
+
+            } else if (result == ShotResult.MISS) {
+
+                System.out.println(
+                        "You missed. Try again:"
+                );
+
             } else {
-                System.out.println("You missed!");
+
+                shipsRemaining--;
+
+                if (shipsRemaining == 0) {
+                    System.out.println(
+                            "You sank the last ship. You won. Congratulations!"
+                    );
+                    break;
+                }
+
+                System.out.println(
+                        "You sank a ship! Specify a new target:"
+                );
             }
-
-            System.out.println();
-
-            // tablero real
-            field.print(false);
-
-            break;
         }
     }
 
@@ -157,12 +189,14 @@ public class Game {
     ) {
         if (start.getRow() == end.getRow()) {
             return Math.abs(
-                    start.getColumn() - end.getColumn()
+                    start.getColumn()
+                            - end.getColumn()
             ) + 1;
         }
 
         return Math.abs(
-                start.getRow() - end.getRow()
+                start.getRow()
+                        - end.getRow()
         ) + 1;
     }
 }
