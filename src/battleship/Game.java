@@ -7,76 +7,115 @@ public class Game {
     private final Scanner scanner = new Scanner(System.in);
     private final GameField field = new GameField();
 
+    private final Ship[] ships = {
+            new Ship("Aircraft Carrier", 5),
+            new Ship("Battleship", 4),
+            new Ship("Submarine", 3),
+            new Ship("Cruiser", 3),
+            new Ship("Destroyer", 2)
+    };
+
     public void start() {
         field.print();
 
-        System.out.println("Enter the coordinates of the ship:");
-
-        String startInput = scanner.next();
-        String endInput = scanner.next();
-
-        if (!Coordinate.isValid(startInput)
-                || !Coordinate.isValid(endInput)) {
-            System.out.println("Error!");
-            return;
+        for (Ship ship : ships) {
+            placeShip(ship);
         }
-
-        Coordinate start = new Coordinate(startInput);
-        Coordinate end = new Coordinate(endInput);
-
-        if (!isStraightShip(start, end)) {
-            System.out.println("Error!");
-            return;
-        }
-
-        printShipInfo(start, end);
     }
 
-    private boolean isStraightShip(Coordinate start, Coordinate end) {
+    private void placeShip(Ship ship) {
+        System.out.println(
+                "Enter the coordinates of the "
+                        + ship.getName()
+                        + " ("
+                        + ship.getLength()
+                        + " cells):"
+        );
+
+        while (true) {
+            String startInput = scanner.next();
+            String endInput = scanner.next();
+
+            if (!Coordinate.isValid(startInput)
+                    || !Coordinate.isValid(endInput)) {
+
+                System.out.println(
+                        "Error! Wrong ship location! Try again:"
+                );
+                continue;
+            }
+
+            Coordinate start = new Coordinate(startInput);
+            Coordinate end = new Coordinate(endInput);
+
+            if (!isStraightShip(start, end)) {
+                System.out.println(
+                        "Error! Wrong ship location! Try again:"
+                );
+                continue;
+            }
+
+            int length = calculateLength(start, end);
+
+            if (length != ship.getLength()) {
+                System.out.println(
+                        "Error! Wrong length of the "
+                                + ship.getName()
+                                + "! Try again:"
+                );
+                continue;
+            }
+
+            int minRow = Math.min(start.getRow(), end.getRow());
+            int maxRow = Math.max(start.getRow(), end.getRow());
+
+            int minCol = Math.min(start.getColumn(), end.getColumn());
+            int maxCol = Math.max(start.getColumn(), end.getColumn());
+
+            if (field.isTooClose(
+                    minRow,
+                    maxRow,
+                    minCol,
+                    maxCol
+            )) {
+                System.out.println(
+                        "Error! You placed it too close to another one. Try again:"
+                );
+                continue;
+            }
+
+            field.placeShip(
+                    minRow,
+                    maxRow,
+                    minCol,
+                    maxCol
+            );
+
+            field.print();
+            break;
+        }
+    }
+
+    private boolean isStraightShip(
+            Coordinate start,
+            Coordinate end
+    ) {
         return start.getRow() == end.getRow()
                 || start.getColumn() == end.getColumn();
     }
 
-    private void printShipInfo(Coordinate start, Coordinate end) {
-        int length;
-
+    private int calculateLength(
+            Coordinate start,
+            Coordinate end
+    ) {
         if (start.getRow() == end.getRow()) {
-            length = Math.abs(start.getColumn() - end.getColumn()) + 1;
-        } else {
-            length = Math.abs(start.getRow() - end.getRow()) + 1;
+            return Math.abs(
+                    start.getColumn() - end.getColumn()
+            ) + 1;
         }
 
-        System.out.println("Length: " + length);
-        System.out.print("Parts:");
-
-        if (start.getRow() == end.getRow()) {
-            int step = start.getColumn() <= end.getColumn() ? 1 : -1;
-
-            for (int column = start.getColumn(); ; column += step) {
-                System.out.print(
-                        " "
-                                + (char) ('A' + start.getRow())
-                                + (column + 1)
-                );
-
-                if (column == end.getColumn()) {
-                    break;
-                }
-            }
-        } else {
-            int step = start.getRow() <= end.getRow() ? 1 : -1;
-
-            for (int row = start.getRow(); ; row += step) {
-                System.out.print(
-                        " "
-                                + (char) ('A' + row)
-                                + (start.getColumn() + 1)
-                );
-
-                if (row == end.getRow()) {
-                    break;
-                }
-            }
-        }
+        return Math.abs(
+                start.getRow() - end.getRow()
+        ) + 1;
     }
 }
