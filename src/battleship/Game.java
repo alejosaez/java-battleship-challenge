@@ -21,6 +21,13 @@ public class Game {
         for (Ship ship : ships) {
             placeShip(ship);
         }
+
+        System.out.println("The game starts!");
+        System.out.println();
+
+        field.print();
+
+        takeShot();
     }
 
     private void placeShip(Ship ship) {
@@ -92,6 +99,39 @@ public class Game {
             );
 
             field.print();
+            break;
+        }
+    }
+
+    private void takeShot() {
+        System.out.println("Take a shot!");
+
+        while (true) {
+            String shotInput = scanner.next();
+
+            if (!Coordinate.isValid(shotInput)) {
+                System.out.println(
+                        "Error! You entered the wrong coordinates! Try again:"
+                );
+                continue;
+            }
+
+            Coordinate shot = new Coordinate(shotInput);
+
+            boolean hit = field.shoot(
+                    shot.getRow(),
+                    shot.getColumn()
+            );
+
+            System.out.println();
+            field.print();
+
+            if (hit) {
+                System.out.println("You hit a ship!");
+            } else {
+                System.out.println("You missed!");
+            }
+
             break;
         }
     }

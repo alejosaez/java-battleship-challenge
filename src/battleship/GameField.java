@@ -48,7 +48,6 @@ public class GameField {
 
         for (int row = fromRow; row <= toRow; row++) {
             for (int col = fromCol; col <= toCol; col++) {
-
                 if (field[row][col] == 'O') {
                     return true;
                 }
@@ -69,5 +68,16 @@ public class GameField {
                 field[row][col] = 'O';
             }
         }
+    }
+
+    public boolean shoot(int row, int col) {
+
+        if (field[row][col] == 'O') {
+            field[row][col] = 'X';
+            return true;
+        }
+
+        field[row][col] = 'M';
+        return false;
     }
 }
