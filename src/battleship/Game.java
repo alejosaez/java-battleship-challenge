@@ -25,7 +25,6 @@ public class Game {
         System.out.println("The game starts!");
         System.out.println();
 
-        // Mostrar el tablero ocultando los barcos
         field.print(true);
 
         takeShot();
@@ -126,7 +125,7 @@ public class Game {
 
             System.out.println();
 
-            // Campo con niebla
+            // tablero con niebla
             field.print(true);
 
             if (hit) {
@@ -137,7 +136,7 @@ public class Game {
 
             System.out.println();
 
-            // Campo real
+            // tablero real
             field.print(false);
 
             break;
