@@ -18,14 +18,20 @@ public class GameField {
         }
     }
 
-    public void print() {
+    public void print(boolean fog) {
         System.out.println("  1 2 3 4 5 6 7 8 9 10");
 
         for (int row = 0; row < SIZE; row++) {
             System.out.print((char) ('A' + row));
 
             for (int col = 0; col < SIZE; col++) {
-                System.out.print(" " + field[row][col]);
+                char cell = field[row][col];
+
+                if (fog && cell == 'O') {
+                    cell = '~';
+                }
+
+                System.out.print(" " + cell);
             }
 
             System.out.println();
@@ -71,7 +77,6 @@ public class GameField {
     }
 
     public boolean shoot(int row, int col) {
-
         if (field[row][col] == 'O') {
             field[row][col] = 'X';
             return true;

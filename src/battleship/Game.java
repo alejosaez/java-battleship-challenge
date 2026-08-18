@@ -16,7 +16,7 @@ public class Game {
     };
 
     public void start() {
-        field.print();
+        field.print(false);
 
         for (Ship ship : ships) {
             placeShip(ship);
@@ -25,7 +25,8 @@ public class Game {
         System.out.println("The game starts!");
         System.out.println();
 
-        field.print();
+        // Mostrar el tablero ocultando los barcos
+        field.print(true);
 
         takeShot();
     }
@@ -98,7 +99,7 @@ public class Game {
                     maxCol
             );
 
-            field.print();
+            field.print(false);
             break;
         }
     }
@@ -111,7 +112,7 @@ public class Game {
 
             if (!Coordinate.isValid(shotInput)) {
                 System.out.println(
-                        "Error! You entered the wrong coordinates! Try again:"
+                        "Error! You entered wrong coordinates! Try again:"
                 );
                 continue;
             }
@@ -124,13 +125,20 @@ public class Game {
             );
 
             System.out.println();
-            field.print();
+
+            // Campo con niebla
+            field.print(true);
 
             if (hit) {
                 System.out.println("You hit a ship!");
             } else {
                 System.out.println("You missed!");
             }
+
+            System.out.println();
+
+            // Campo real
+            field.print(false);
 
             break;
         }
