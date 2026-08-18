@@ -7,6 +7,8 @@ public class GameField {
     private final char[][] field = new char[SIZE][SIZE];
     private final Ship[][] ships = new Ship[SIZE][SIZE];
 
+    private int shipsRemaining = 5;
+
     public GameField() {
         fill();
     }
@@ -38,8 +40,6 @@ public class GameField {
 
             System.out.println();
         }
-
-        System.out.println();
     }
 
     public boolean isTooClose(
@@ -92,6 +92,7 @@ public class GameField {
             ship.hit();
 
             if (ship.isSunk()) {
+                shipsRemaining--;
                 return ShotResult.SUNK;
             }
 
@@ -107,5 +108,9 @@ public class GameField {
         }
 
         return ShotResult.MISS;
+    }
+
+    public boolean allShipsSunk() {
+        return shipsRemaining == 0;
     }
 }
